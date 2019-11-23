@@ -18,8 +18,11 @@ class Board():
             for i in range(self.cols, -1, -1):
                 if self.board[i][cols] == 0:
                     self.board[i][cols] = player
-                    break
-            # check if we win here
+                    return True
+                # check if we win here
+        else:
+            return False
+            
 
     def isBoardFilled(self):
         for j in range(self.cols):
