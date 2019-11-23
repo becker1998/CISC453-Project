@@ -38,7 +38,7 @@ class Board():
         # check top and bot scores
         while self.lastPiece[0] - 1 >= 0 and self.board[self.lastPiece[0] - 1, self.lastPiece[1]] == player:
             topscore += 1
-        while self.lastPiece[0] + 1 <= 5 and self.board[self.lastPiece[0] - 1, self.lastPiece[1]] == player:
+        while self.lastPiece[0] + 1 <= 5 and self.board[self.lastPiece[0] + 1, self.lastPiece[1]] == player:
             botscore += 1
         if topscore + botscore >= 4:
             return player
