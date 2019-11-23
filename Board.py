@@ -75,6 +75,12 @@ class Board():
             if self.board[0][j] == 0:
                 return False
         return True
+    def getActions(self):
+        actions = []
+        for i in range(self.cols):
+            if isColFilled == False:
+                actions.append(i)
+        return actions
 
 x = Board(6, 7)
 print (x.board)
