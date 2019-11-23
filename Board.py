@@ -5,6 +5,7 @@ class Board():
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
+        self.lastPiece = []
         self.board = [[0] * cols] * rows
 
     def isSlotFilled(self, row, col):
