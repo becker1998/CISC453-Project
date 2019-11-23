@@ -22,7 +22,7 @@ class Board():
                     return True
         return False
 
-    def checkForWin(self, col):
+    def checkForWin(self):
         topscore = 1
         botscore = 1
         toprightscore = 1
