@@ -15,7 +15,6 @@ class QAgent(Agent):
         actionsTemp = []
         lenActions = len(actions)
         return rand.randint(0,lenActions - 1)
-    def chooseState (self):
 
     def choice (self):
         R = Board.getRewards
@@ -31,7 +30,7 @@ class QAgent(Agent):
             maxValue = max(self.qTable)
             placement = self.qTable.index(maxValue)
             #heuristic value based off the next state
-            maxQ = Baord.maxConnect
+            maxQ = Baord.maxConnect()
             self.qTable[placement] = self.qTable[placement] + self.alpha*(1
                                                                           + self.gamma*(maxQ) - self.qTable[placement]
             return placement                                                              )
