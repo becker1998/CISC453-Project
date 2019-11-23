@@ -16,14 +16,12 @@ class Board():
     def insertPiece(self, player, col):
         if not isColFilled(col):
             for i in range(self.cols, -1, -1):
-                if self.board[i][cols] == 0:
+                if not isSlotFilled(i, cols):
                     self.board[i][cols] = player
                     return True
-                # check if we win here
         else:
             return False
-            
-
+        
     def isBoardFilled(self):
         for j in range(self.cols):
             if self.board[0][j] == 0:
