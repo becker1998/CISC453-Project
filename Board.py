@@ -8,7 +8,7 @@ class Board():
         self.board = [[0] * cols] * rows
 
     def isSlotFilled(self, row, col):
-        return self.board[row][column] != 0
+        return self.board[row][col] != 0
 
     def isColFilled(self, col):
         return self.board[0][col] != 0
