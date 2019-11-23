@@ -75,6 +75,11 @@ class Board():
             if self.board[0][j] == 0:
                 return False
         return True
+    def isBoardEmpty(Self):
+        initBoard = [[0] * cols] * rows
+        if initBoard == self.board:
+            return True
+        return False
     def getActions(self):
         actions = []
         for i in range(self.cols):
