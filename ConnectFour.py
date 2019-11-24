@@ -35,25 +35,25 @@ class ConnectFour:
         # check topright and botleft scores
         print ("check board: ", board)
         print ("check lastPiece: ", lastPiece)
-        while lastPiece[0] - 1 >= 0 and lastPiece[1] + 1 <= 6 and board[lastPiece[0] - 1, lastPiece[1] + 1] == player:
+        while lastPiece[0] - 1 >= 0 and lastPiece[1] + 1 <= 6 and board[lastPiece[0] - 1][ lastPiece[1] + 1] == player:
             toprightscore += 1
-        while lastPiece[0] + 1 <= 5 and lastPiece[1] - 1 >= 0 and board[lastPiece[0] + 1, lastPiece[1] - 1] == player:
+        while lastPiece[0] + 1 <= 5 and lastPiece[1] - 1 >= 0 and board[lastPiece[0] + 1][ lastPiece[1] - 1] == player:
             botleftscore += 1
         if toprightscore + botleftscore >= 4:
             return player
 
         # check right and left scores
-        while lastPiece[1] + 1 <= 6 and board[lastPiece[0], lastPiece[1] + 1] == player:
+        while lastPiece[1] + 1 <= 6 and board[lastPiece[0]][ lastPiece[1] + 1] == player:
             rightscore += 1
-        while lastPiece[1] - 1 >= 0 and board[lastPiece[0], lastPiece[1] - 1] == player:
+        while lastPiece[1] - 1 >= 0 and board[lastPiece[0]][lastPiece[1] - 1] == player:
             leftscore += 1
         if rightscore + leftscore >= 4:
             return player
 
         # check botright and topleft scores
-        while lastPiece[0] + 1 <= 5 and lastPiece[1] + 1 <= 6 and board[lastPiece[0] + 1, lastPiece[1] + 1] == player:
+        while lastPiece[0] + 1 <= 5 and lastPiece[1] + 1 <= 6 and board[lastPiece[0] + 1][ lastPiece[1] + 1] == player:
             botrightscore += 1
-        while lastPiece[0] - 1 >= 0 and lastPiece[1] - 1 >= 0 and board[lastPiece[0] - 1, lastPiece[1] - 1] == player:
+        while lastPiece[0] - 1 >= 0 and lastPiece[1] - 1 >= 0 and board[lastPiece[0] - 1][lastPiece[1] - 1] == player:
             topleftscore += 1
         if botrightscore + topleftscore >= 4:
             return player
