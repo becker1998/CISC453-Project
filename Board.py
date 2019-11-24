@@ -31,7 +31,9 @@ class Board():
 
     def getCols(self):
         return self.cols
-        
+    def getLastPiece (self):
+        '''get ethod for which player inserted a coin last'''
+        return self.lastPiece;
     def isBoardFilled(self):
         for j in range(self.cols):
             if self.board[0][j] == 0:

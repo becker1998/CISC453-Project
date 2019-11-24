@@ -176,13 +176,19 @@ class ConnectFour:
         return threeconnections
         
     def play (Self):
+        '''runs the game with 2 q agents'''
+
+        
         board = Board(self.rows, self.cols)
         p1 = QAgent(1, self.actions, self.alpha, self.gamma, 2)
         p2 = QAgent(2, self.actions, self.alpha, self.gamma, 1)
+        
         insertP1 = p1.choice(board)
         board.insertPiece(1,insertP1)
         insertP2 = p2.choice(board)
         board.insertPiece(2,insertP2)
+        
         lastPiece = board.getLastPiece()
+        #needs while loop to complete game
         
         
