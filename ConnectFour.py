@@ -23,16 +23,18 @@ class ConnectFour:
         topleftscore = 1
         # check which player put in the last piece
         player = board[lastPiece[0], lastPiece[1]]
-
+        
         # check top and bot scores
-        while lastPiece[0] - 1 >= 0 and board[lastPiece[0] - 1, lastPiece[1]] == player:
+        while lastPiece[0] - 1 >= 0 and board[lastPiece[0] - 1][lastPiece[1]] == player:
             topscore += 1
-        while lastPiece[0] + 1 <= 5 and board[lastPiece[0] - 1, lastPiece[1]] == player:
+        while lastPiece[0] + 1 <= 5 and board[lastPiece[0] - 1][ lastPiece[1]] == player:
             botscore += 1
         if topscore + botscore >= 4:
             return player
 
         # check topright and botleft scores
+        print ("check board: ", board)
+        print ("check lastPiece: ", lastPiece)
         while lastPiece[0] - 1 >= 0 and lastPiece[1] + 1 <= 6 and board[lastPiece[0] - 1, lastPiece[1] + 1] == player:
             toprightscore += 1
         while lastPiece[0] + 1 <= 5 and lastPiece[1] - 1 >= 0 and board[lastPiece[0] + 1, lastPiece[1] - 1] == player:
@@ -175,6 +177,11 @@ class ConnectFour:
                         if tempconnection not in threeconnections:
                             threeconnections.append(tempconnection)
         return threeconnections
+    def printGame (self,board):
+        '''prints the game to the monitor'''
+
+        print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
+      for row in board]))
         
     def play (self):
         '''runs the game with 2 q agents'''
@@ -185,14 +192,21 @@ class ConnectFour:
         p2 = QAgent(2, self.actions, self.alpha, self.gamma, 1)
         
         insertP1 = p1.choice(board.getBoard(), board.isBoardEmpty())
+        print("insert : ", insertP1)
         board.insertPiece(1,insertP1-1)
         insertP2 = p2.choice(board.getBoard(), board.isBoardEmpty())
         board.insertPiece(2,insertP2-1)
         
         lastPiece = board.getLastPiece()
-        #needs while loop to complete game
         
+        b = board.getBoard().T
+        print("Board 2: ", board.getBoard())
+        self.printGame(b)
+        b = board.getBoard().T
+        #needs while loop to complete game
+        checkWin = self.checkForWin(board.getBoard(), lastPiece)
+        #while checkWin == 0:
+            
 
 game = ConnectFour(6,7,1,1)
 game.play()
-

@@ -6,7 +6,7 @@ class Board():
         self.rows = rows
         self.cols = cols
         self.lastPiece = []
-        self.board = [[0] * rows] * cols
+        self.board = np.zeros(shape=(7,6), dtype=int)
 
     def isSlotFilled(self,col, row):
         print("slot row: ", row)
@@ -21,9 +21,11 @@ class Board():
     def insertPiece(self, player, col):
         if not self.isColFilled(col):
             for i in range(self.rows - 1, -1, -1):
-                print(i)
+                print("i: ", i)
                 if not self.isSlotFilled(col, i):
+                    print("loc: ", col , " ", i)
                     self.board[col][i] = player
+                    print("Board 3: ", self.board) 
                     self.lastPiece = [col, i]
                     return True
         return False
@@ -46,10 +48,8 @@ class Board():
         return True
     
     def isBoardEmpty(self):
-        initBoard = [[0] * self.rows] * self.cols
-        if initBoard == self.board:
-            return True
-        return False
+        initBoard = np.zeros(shape=(7,6), dtype=int)
+        return np.array_equal(initBoard, self.board)
     
     def getActions(self):
         actions = []
