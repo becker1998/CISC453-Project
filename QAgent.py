@@ -1,14 +1,17 @@
-import numpy as np import random as rand from Agent import * import
-Board
+import numpy as np
+import random as rand
+from Agent import *
+import Board
 
 class QAgent(Agent):
     def __init__(self, pTag, actions, alpha, gamma, oTag):
-        super.__init__(actions)
+        super(Agent,self).__init__()
+        self.qTable = np.zeros(7, dtype=int)
         self.alpha = alpha        
         self.gamma = gamma
         self.pTag = pTag
         self.oTag = oTag
-        
+        self.numCol = len(self.qTable)
         
     def chooseAction (self):
         '''chooses an actions'''
@@ -16,7 +19,7 @@ class QAgent(Agent):
         actionsTemp = []
         lenActions = len(actions)
         return rand.randint(0,lenActions - 1)
-    def evalColFunction (self,col, board)
+    def evalColFunction (self,col, board):
         '''heuristic function that will return a value from 1-4 based on
         the danger of losing/winning in the nexr state'''
         valCurrent = 0
@@ -34,14 +37,14 @@ class QAgent(Agent):
                 else:
                     break
         #opponents coin is on top
-        else if below < top:
+        elif below < top:
             valOpp +=1
             for i in range (below+1, len(column)):
                 if column[i] == self.oTag:
                     valOpp += 1
                 else:
                     break
-        return returnValue(valCurrent, valOpp)
+        return self.returnValue(valCurrent, valOpp)
     def evalRowFunction (self, col, numCol, board):
         '''heruistic function that counts number of roww connections'''
         valCurrent = 0
@@ -53,7 +56,7 @@ class QAgent(Agent):
         #we dont care about the filled slots
         if top < below and top != 0:
             emptySpots = top - 1
-        else if below < top and below != 0:
+        elif below < top and below != 0:
             emptySpots = below - 1
         #3 cases when we are on the first, last or middle columns
         if col == 1:
@@ -66,7 +69,7 @@ class QAgent(Agent):
                         valCurrent += 1
                     else:
                         break
-            else if board[col][emptySpots] == self.oTag:
+            elif board[col][emptySpots] == self.oTag:
                 valOpp += 1
                 for i in range (2,4):
                     if board[i][emptySpots] == self.oTag:
@@ -74,15 +77,15 @@ class QAgent(Agent):
                     else:
                         break
          #last column           
-        else if col == numCol:
+        elif col == numCol:
             if board[col - 1][emptySpots] == self.pTag:
                 valCurrent += 1
                 for i in range (col - 2,  col - 4):
                     if board[i][emptySpots] == self.pTag:
-                        valCurrent += 1
+                            valCurrent += 1
                     else:
                         break
-            else if board[col - 1][emptySpots] == self.oTag:
+            elif board[col - 1][emptySpots] == self.oTag:
                 valOpp += 1
                 for i in range (col - 2, col - 4):
                     if board[i][emptySpots] == self.oTag:
@@ -97,7 +100,7 @@ class QAgent(Agent):
                         valCurrent += 1
                    else:
                        break
-            else if board[col][emptySpots] == self.oTag:
+            elif board[col][emptySpots] == self.oTag:
                 valOpp += 1
                 for i in range (col + 1, col + 2):
                     if board[i][emptySpots] == self.oTag:
@@ -111,7 +114,7 @@ class QAgent(Agent):
                         valCurrent += 1
                    else:
                        break
-            else if board[col-2][emptySpots] == self.oTag:
+            elif board[col-2][emptySpots] == self.oTag:
                 valOpp += 1
                 for i in range (col - 3, col - 4):
                     if board[i][emptySpots] == self.oTag:
@@ -119,17 +122,19 @@ class QAgent(Agent):
                     else:
                         break
             
-        return returnValue(valCurrent, valOpp)
+        return self.returnValue(valCurrent, valOpp)
     def evalDiagFunction (self, col, numCol, board):
         '''heuristic to evaluate diagonal connections'''
         valCurrent = 0
         valOpp = 0
-        column = board[col - 1]
+        print("col Diag: ", col)
+        column = board[col-1]
+        
         top = column.index(self.pTag)
         below = column.index(self.oTag)
         if top < below and top != 0:
             emptySpots = top - 1
-        else if below < top and below != 0:
+        elif below < top and below != 0:
             emptySpots = below - 1
 
         if col == 1:
@@ -141,7 +146,7 @@ class QAgent(Agent):
                             valCurrent += 1
                         else:
                             break
-                else if board[col][emptySpots + 1] == self.oTag:
+                elif board[col][emptySpots + 1] == self.oTag:
                     valOpp += 1
                     for i in range (2,4):
                         if board[i][emptySpots + 1] == self.oTag:
@@ -159,7 +164,7 @@ class QAgent(Agent):
                             valCurrent += 1
                         else:
                             break
-                else if board[col][emptySpots - 1] == self.oTag:
+                elif board[col][emptySpots - 1] == self.oTag:
                     valOpp += 1
                     for i in range (2,4):
                         if board[i][emptySpots - 1] == self.oTag:
@@ -169,7 +174,7 @@ class QAgent(Agent):
             except IndexError:
                 valCurrent = valCurrent
                 valOpp = valOpp
-        else if col == numCol:
+        elif col == numCol:
             try:
                 if board[col - 1][emptySpots + 1] == self.pTag:
                     valCurrent += 1
@@ -178,7 +183,7 @@ class QAgent(Agent):
                             valCurrent += 1
                         else:
                             break
-                else if board[col-1][emptySpots + 1] == self.oTag:
+                elif board[col-1][emptySpots + 1] == self.oTag:
                     valOpp += 1
                     for i in range (col-2,col-4):
                         if board[i][emptySpots + 1] == self.oTag:
@@ -196,7 +201,7 @@ class QAgent(Agent):
                             valCurrent += 1
                         else:
                             break
-                else if board[col-1][emptySpots - 1] == self.oTag:
+                elif board[col-1][emptySpots - 1] == self.oTag:
                     valOpp += 1
                     for i in range (col-2,col-4):
                         if board[i][emptySpots - 1] == self.oTag:
@@ -215,7 +220,7 @@ class QAgent(Agent):
                             valCurrent += 1
                         else:
                             break
-                else if board[col - 1][emptySpots + 1] == self.oTag and board[col + 1][emptySpots - 1] != self.oTag:
+                elif board[col - 1][emptySpots + 1] == self.oTag and board[col + 1][emptySpots - 1] != self.oTag:
                     valOpp += 1
                     for i in range (col-2,col-4):
                         if board[i][emptySpots + 1] == self.oTag:
@@ -244,53 +249,61 @@ class QAgent(Agent):
                 valCurrent = valCurrent
                 valOpp = valOpp
                             
-        return returnValue(valCurrent, valOpp)
+        return self.returnValue(valCurrent, valOpp)
     
     def returnValue (self, valCurrent, valOpp):
         '''evalutes the correct return value based on the heurstic functions'''
         #if the current player has to connections, win state
         if valCurrent == 3:
             return 4
-        else if valOpp == 3 and valCurrent != 3:
+        elif valOpp == 3 and valCurrent != 3:
             return valOpp
-        else if valOpp == 2 or valCurrent == 2:
+        elif valOpp == 2 or valCurrent == 2:
             return 2
-        else if valOpp == 1 or valCurrent == 1:
+        elif valOpp == 1 or valCurrent == 1:
             return 1
         else:
             return 0
     def heuristicValue (self, col, numCol, board):
         '''function to return max of the heuristic functions'''
-        return max([evalDiagFunction(col, numCol, board), evalRowFunction(col, numCol, board),
-                    evalColFunction(col, board)])
+        return max([self.evalDiagFunction(col, numCol, board), self.evalRowFunction(col, numCol, board),
+                    self.evalColFunction(col, board)])
         
-    def updateQ (self,board):
+    def updateQ (self, board):
         '''updates the q table'''
-        numCol = len(self.qTable)
-        for i in range (0, numCol):
-            self.qTable[i] = self.qTable[i] + self.alpha*(self.reward + self.gamma*
-                                                          heuristicValue(col,numCol,board) self.qTable[i]) 
-                                                          
-    def choice (self, board):
+        #numCol = len(self.qTable)
+        for i in range (0, self.numCol):
+            col = board[i]
+            self.qTable[i] = self.qTable[i] + self.alpha*(1 + self.gamma*
+                                                          self.heuristicValue(i,self.numCol,board)- self.qTable[i]) 
+    def checkPlayerInsert(self, board, cols):
+        '''checks to see if the player has already inserted a coin'''
+        for j in range(cols):
+            if board[j][0] == 2:
+                return True
+        return False
+    def choice (self, board, isEmpty):
         '''player choose optimal action'''
-        if Board.isBoardEmpty():
+        if isEmpty:
             #since board is empty pick random column to drop coin
             placement = rand.randint(0,6)
             #update q table
-            self.qTable[placement] = self.qTable[placement] + self.alpha*(1
-                                                                          + self.gamma*(1) - self.qTable[placement]
-            return placement                                                              )
+            self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(1) - self.qTable[placement])
+            return placement + 1
+        elif self.checkPlayerInsert(board, self.numCol) == False:
+            placement = rand.randint(0,6)
+            #update q table
+            self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(1) - self.qTable[placement])
+            return placement + 1
         else:
-            updateQ(board);
+            self.updateQ(board)
             maxValue = max(self.qTable)
             placement = self.qTable.index(maxValue)
+            print(placement)
             #heuristic value based off the next state
-            maxQ = Baord.maxConnect()
-            self.qTable[placement] = self.qTable[placement] + self.alpha*(1
-                                                                          + self.gamma*(maxQ) - self.qTable[placement]
-            return placement                                                              )
-            
-                                                                          
+            self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(self.heuristicValue(placement,self.numCol,board)) - self.qTable[placement])
+
+            return placement + 1                                                                                 
                                                                           
     
                 

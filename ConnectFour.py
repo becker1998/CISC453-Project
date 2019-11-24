@@ -1,11 +1,12 @@
 import numpy as np
 import random as rand
 from Agent import *
-import Board
+from Board import Board
+from QAgent import QAgent
 
 class ConnectFour:
     def __init__(self, rows, cols, alpha, gamma):
-        self.turn = rand.ranint(1,2)
+        self.turn = rand.randint(1,2)
         self.rows = rows
         self.cols = cols
         self.alpha = alpha
@@ -175,7 +176,7 @@ class ConnectFour:
                             threeconnections.append(tempconnection)
         return threeconnections
         
-    def play (Self):
+    def play (self):
         '''runs the game with 2 q agents'''
 
         
@@ -183,12 +184,15 @@ class ConnectFour:
         p1 = QAgent(1, self.actions, self.alpha, self.gamma, 2)
         p2 = QAgent(2, self.actions, self.alpha, self.gamma, 1)
         
-        insertP1 = p1.choice(board)
-        board.insertPiece(1,insertP1)
-        insertP2 = p2.choice(board)
-        board.insertPiece(2,insertP2)
+        insertP1 = p1.choice(board.getBoard(), board.isBoardEmpty())
+        board.insertPiece(1,insertP1-1)
+        insertP2 = p2.choice(board.getBoard(), board.isBoardEmpty())
+        board.insertPiece(2,insertP2-1)
         
         lastPiece = board.getLastPiece()
         #needs while loop to complete game
         
-        
+
+game = ConnectFour(6,7,1,1)
+game.play()
+
