@@ -4,9 +4,13 @@ from Agent import *
 import Board
 
 class ConnectFour:
-    def __init__(self):
+    def __init__(self, rows, cols, alpha, gamma):
         self.turn = rand.ranint(1,2)
-    
+        self.rows = rows
+        self.cols = cols
+        self.alpha = alpha
+        self.gamma = gamma
+        self.actions = np.zeros(cols, dtype = int)
     def checkForWin(self, board, lastPiece):
         topscore = 1
         botscore = 1
@@ -172,4 +176,13 @@ class ConnectFour:
         return threeconnections
         
     def play (Self):
+        board = Board(self.rows, self.cols)
+        p1 = QAgent(1, self.actions, self.alpha, self.gamma, 2)
+        p2 = QAgent(2, self.actions, self.alpha, self.gamma, 1)
+        insertP1 = p1.choice(board)
+        board.insertPiece(1,insertP1)
+        insertP2 = p2.choice(board)
+        board.insertPiece(2,insertP2)
+        lastPiece = board.getLastPiece()
+        
         
