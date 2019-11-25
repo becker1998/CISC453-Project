@@ -12,51 +12,82 @@ class ConnectFour:
         self.alpha = alpha
         self.gamma = gamma
         self.actions = np.zeros(cols, dtype = int)
+        self.twoconnections = []
+        self.threeconnections = []
+        
     def checkForWin(self, board, lastPiece):
-        topscore = 1
-        botscore = 1
-        toprightscore = 1
-        botleftscore = 1
-        rightscore = 1
-        leftscore = 1
-        botrightscore = 1
-        topleftscore = 1
+        topscore = 0
+        botscore = 0
+        toprightscore = 0
+        botleftscore = 0
+        rightscore = 0
+        leftscore = 0
+        botrightscore = 0
+        topleftscore = 0
         # check which player put in the last piece
         player = board[lastPiece[0], lastPiece[1]]
         
         # check top and bot scores
-        while lastPiece[0] - 1 >= 0 and board[lastPiece[0] - 1][lastPiece[1]] == player:
+        i = lastPiece[0]
+        j = lastPiece[1]
+        while i - 1 >= 0 and board[i - 1][j] == player:
             topscore += 1
-        while lastPiece[0] + 1 <= 5 and board[lastPiece[0] - 1][ lastPiece[1]] == player:
+            i -= 1
+        i = lastPiece[0]
+        j = lastPiece[1]
+        while i + 1 <= 5 and board[i + 1][j] == player:
             botscore += 1
-        if topscore + botscore >= 4:
+            i += 1
+        if topscore + botscore >= 3:
             return player
 
         # check topright and botleft scores
         print ("check board:")
         print(board)
         print ("check lastPiece:", lastPiece)
-        while lastPiece[0] - 1 >= 0 and lastPiece[1] + 1 <= 6 and board[lastPiece[0] - 1][ lastPiece[1] + 1] == player:
+        i = lastPiece[0]
+        j = lastPiece[1]
+        while i - 1 >= 0 and j + 1 <= 6 and board[i - 1][j + 1] == player:
             toprightscore += 1
-        while lastPiece[0] + 1 <= 5 and lastPiece[1] - 1 >= 0 and board[lastPiece[0] + 1][ lastPiece[1] - 1] == player:
+            i -= 1
+            j += 1
+        i = lastPiece[0]
+        j = lastPiece[1]
+        while i + 1 <= 5 and j - 1 >= 0 and board[i + 1][j - 1] == player:
             botleftscore += 1
-        if toprightscore + botleftscore >= 4:
+            i += 1
+            j -= 1
+        if toprightscore + botleftscore >= 3:
             return player
 
         # check right and left scores
-        while lastPiece[1] + 1 <= 6 and board[lastPiece[0]][ lastPiece[1] + 1] == player:
+        i = lastPiece[0]
+        j = lastPiece[1]
+        while j + 1 <= 6 and board[i][j + 1] == player:
             rightscore += 1
-        while lastPiece[1] - 1 >= 0 and board[lastPiece[0]][lastPiece[1] - 1] == player:
+            j += 1
+        i = lastPiece[0]
+        j = lastPiece[1]
+        while j - 1 >= 0 and board[i][j - 1] == player:
             leftscore += 1
-        if rightscore + leftscore >= 4:
+            j -= 1
+        if rightscore + leftscore >= 3:
             return player
 
         # check botright and topleft scores
-        while lastPiece[0] + 1 <= 5 and lastPiece[1] + 1 <= 6 and board[lastPiece[0] + 1][ lastPiece[1] + 1] == player:
+        i = lastPiece[0]
+        j = lastPiece[1]
+        while i + 1 <= 5 and j + 1 <= 6 and board[i + 1][j + 1] == player:
             botrightscore += 1
-        while lastPiece[0] - 1 >= 0 and lastPiece[1] - 1 >= 0 and board[lastPiece[0] - 1][lastPiece[1] - 1] == player:
+            i += 1
+            j += 1
+        i = lastPiece[0]
+        j = lastPiece[1]
+        while i - 1 >= 0 and j - 1 >= 0 and board[i - 1][j - 1] == player:
             topleftscore += 1
-        if botrightscore + topleftscore >= 4:
+            i -= 1
+            j -= 1
+        if botrightscore + topleftscore >= 3:
             return player
         
         # we didn't win
@@ -64,6 +95,7 @@ class ConnectFour:
 
     def checkBoardState(self, player, rows, cols, board):
         # array of all the connections of three for the given player
+        twoconnections = []
         threeconnections = []
         for i in range(rows):
             for j in range(cols):
@@ -83,7 +115,7 @@ class ConnectFour:
                         topscore += 1
                     while i + 1 <= 5 and board[i + 1, j] == player:
                         botscore += 1
-                    if topscore + botscore == 3:
+                    if topscore + botscore == 2 or topscore + botscore == 3:
                         tempconnection.append([i, j])
                         for k in range(1, topscore):
                             tempconnection.append([i - k, j])
@@ -94,13 +126,17 @@ class ConnectFour:
                     if tempconnection[0][0] - 1 >= 0 and board[tempconnection[0][0] - 1, tempconnection[0][1]] == 0:
                         tempconnection.append([tempconnection[0][0] - 1, tempconnection[0][1]])
                         tempconnection.sort()
-                        if tempconnection not in threeconnections:
+                        if topscore + botscore == 2 and tempconnection not in twoconnections:
+                            twoconnections.append(tempconnection)
+                        if topscore + botscore == 2 and tempconnection not in threeconnections:
                             threeconnections.append(tempconnection)
                     # check if bot slot is free
                     if tempconnection[2][0] + 1 <= 5 and board[tempconnection[2][0] + 1, tempconnection[2][1]] == 0:
                         tempconnection.append([tempconnection[2][0] + 1, tempconnection[2][1]])
                         tempconnection.sort()
-                        if tempconnection not in threeconnections:
+                        if topscore + botscore == 2 and tempconnection not in twoconnections:
+                            twoconnections.append(tempconnection)
+                        if topscore + botscore == 2 and tempconnection not in threeconnections:
                             threeconnections.append(tempconnection)
                     
                     # check topright and botleft scores
@@ -108,7 +144,7 @@ class ConnectFour:
                         toprightscore += 1
                     while i + 1 <= 5 and j - 1 >= 0 and board[i + 1, j - 1] == player:
                         botleftscore += 1
-                    if toprightscore + botleftscore == 3:
+                    if toprightscore + botleftscore == 2 or toprightscore + botleftscore == 3:
                         tempconnection.append([i, j])
                         for k in range(1, toprightscore):
                             tempconnection.append([i - k, j + k])
@@ -119,13 +155,17 @@ class ConnectFour:
                     if tempconnection[0][0] - 1 >= 0 and tempconnection[0][1] + 1 <= 6 and board[tempconnection[0][0] - 1, tempconnection[0][1] + 1] == 0:
                         tempconnection.append([tempconnection[0][0] - 1, tempconnection[0][1] + 1])
                         tempconnection.sort()
-                        if tempconnection not in threeconnections:
+                        if topscore + botscore == 2 and tempconnection not in twoconnections:
+                            twoconnections.append(tempconnection)
+                        if topscore + botscore == 2 and tempconnection not in threeconnections:
                             threeconnections.append(tempconnection)
                     # check if botleft slot is free
                     if tempconnection[2][0] + 1 <= 5 and tempconnection[2][1] - 1 >= 0 and board[tempconnection[2][0] + 1, tempconnection[2][1] - 1] == 0:
                         tempconnection.append([tempconnection[2][0] + 1, tempconnection[2][1] - 1])
                         tempconnection.sort()
-                        if tempconnection not in threeconnections:
+                        if topscore + botscore == 2 and tempconnection not in twoconnections:
+                            twoconnections.append(tempconnection)
+                        if topscore + botscore == 2 and tempconnection not in threeconnections:
                             threeconnections.append(tempconnection)
 
                     # check right and left scores
@@ -133,7 +173,7 @@ class ConnectFour:
                         rightscore += 1
                     while j - 1 >= 0 and board[i, j - 1] == player:
                         leftscore += 1
-                    if rightscore + leftscore == 3:
+                    if rightscore + leftscore == 2 or rightscore + leftsocre == 3:
                         tempconnection.append([i, j])
                         for k in range(1, rightscore):
                             tempconnection.append([i, j + k])
@@ -144,13 +184,17 @@ class ConnectFour:
                     if tempconnection[2][1] + 1 <= 6 and board[tempconnection[2][0], tempconnection[2][1] + 1] == 0:
                         tempconnection.append([tempconnection[2][0], tempconnection[2][1] + 1])
                         tempconnection.sort()
-                        if tempconnection not in threeconnections:
+                        if topscore + botscore == 2 and tempconnection not in twoconnections:
+                            twoconnections.append(tempconnection)
+                        if topscore + botscore == 2 and tempconnection not in threeconnections:
                             threeconnections.append(tempconnection)
                     # check if left slot is free 
                     if tempconnection[0][1] - 1 >= 0 and board[tempconnection[0][0], tempconnection[0][1] - 1] == 0:
                         tempconnection.append([tempconnection[0][0], tempconnection[0][1] - 1])
                         tempconnection.sort()
-                        if tempconnection not in threeconnections:
+                        if topscore + botscore == 2 and tempconnection not in twoconnections:
+                            twoconnections.append(tempconnection)
+                        if topscore + botscore == 2 and tempconnection not in threeconnections:
                             threeconnections.append(tempconnection)
 
                     # check botright and topleft scores
@@ -158,7 +202,7 @@ class ConnectFour:
                         botrightscore += 1
                     while i - 1 >= 0 and j - 1 >= 0 and board[i + 1, j] == player:
                         topleftscore += 1
-                    if botrightscore + topleftscore == 3:
+                    if botrightscore + topleftscore == 2 or botrightscore + topleftscore == 3:
                         tempconnection.append([i, j])
                         for k in range(1, botrightscore):
                             tempconnection.append([i - k, j + k])
@@ -169,15 +213,21 @@ class ConnectFour:
                     if tempconnection[2][0] + 1 <= 5 and tempconnection[2][1] + 1 <= 6 and board[tempconnection[2][0] + 1, tempconnection[2][1] + 1] == 0:
                         tempconnection.append([tempconnection[2][0] + 1, tempconnection[2][1] + 1])
                         tempconnection.sort()
-                        if tempconnection not in threeconnections:
+                        if topscore + botscore == 2 and tempconnection not in twoconnections:
+                            twoconnections.append(tempconnection)
+                        if topscore + botscore == 2 and tempconnection not in threeconnections:
                             threeconnections.append(tempconnection)
                     # check if topleft slot is free
                     if tempconnection[0][0] - 1 >= 0 and tempconnection[0][1] - 1 >= 0 and board[tempconnection[0][0] - 1, tempconnection[0][1] - 1] == 0:
                         tempconnection.append([tempconnection[0][0] - 1, tempconnection[0][1] - 1])
                         tempconnection.sort()
-                        if tempconnection not in threeconnections:
+                        if topscore + botscore == 2 and tempconnection not in twoconnections:
+                            twoconnections.append(tempconnection)
+                        if topscore + botscore == 2 and tempconnection not in threeconnections:
                             threeconnections.append(tempconnection)
-        return threeconnections
+        self.twoconnections = twoconnections
+        self.threeconnections = threeconnections
+        
     def printGame (self,board):
         '''prints the game to the monitor'''
 
@@ -191,26 +241,30 @@ class ConnectFour:
         board = Board(self.rows, self.cols)
         p1 = QAgent(1, self.actions, self.alpha, self.gamma, 2)
         p2 = QAgent(2, self.actions, self.alpha, self.gamma, 1)
-        
-        insertP1 = p1.choice(board.getBoard(), board.isBoardEmpty())
-        print("insert:", insertP1)
-        board.insertPiece(1, insertP1)
-        insertP2 = p2.choice(board.getBoard(), board.isBoardEmpty())
-        board.insertPiece(2, insertP2)
-        
-        lastPiece = board.getLastPiece()
-        
-        b = board.getBoard().T
-        print("Board 2:")
-        print(board.getBoard())
-        #self.printGame(b)
-        b = board.getBoard().T
-        #needs while loop to complete game
-        checkWin = self.checkForWin(board.getBoard(), lastPiece)
+
+        checkWin = 0
+        while (checkWin == 0 and not board.isBoardFilled()):
+            insertP1 = p1.choice(board.getBoard(), board.isBoardEmpty())
+            print("insert:", insertP1)
+            board.insertPiece(1, insertP1)
+            insertP2 = p2.choice(board.getBoard(), board.isBoardEmpty())
+            board.insertPiece(2, insertP2)
+            
+            lastPiece = board.getLastPiece()
+            
+            b = board.getBoard().T
+            print("Board 2:")
+            print(board.getBoard())
+            #self.printGame(b)
+            b = board.getBoard().T
+            #needs while loop to complete game
+            checkWin = self.checkForWin(board.getBoard(), lastPiece)
         if checkWin == 0:
             print ("no one won")
-        else:
-            print ("someone won")
+        elif checkWin == 1:
+            print ("p1 won")
+        elif checkWin == 2:
+            print ("p2 won")
 
 game = ConnectFour(6, 7, 1, 1)
 game.play()
