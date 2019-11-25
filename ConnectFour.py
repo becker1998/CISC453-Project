@@ -42,9 +42,6 @@ class ConnectFour:
             return player
 
         # check topright and botleft scores
-        print ("check board:")
-        print(board)
-        print ("check lastPiece:", lastPiece)
         i = lastPiece[0]
         j = lastPiece[1]
         while i - 1 >= 0 and j + 1 <= 6 and board[i - 1][j + 1] == player:
@@ -247,16 +244,22 @@ class ConnectFour:
             insertP1 = p1.choice(board.getBoard(), board.isBoardEmpty())
             print("insert:", insertP1)
             board.insertPiece(1, insertP1)
+            
+            print("p1's move:")
+            print(board.getBoard())
+            lastPiece = board.getLastPiece()
+            print ("last piece =", lastPiece)
+            checkWin = self.checkForWin(board.getBoard(), lastPiece)
+            if (checkWin != 0 or board.isBoardFilled()):
+                break
             insertP2 = p2.choice(board.getBoard(), board.isBoardEmpty())
+            print("insert:", insertP2)
             board.insertPiece(2, insertP2)
+            print("p2's move:")
+            print(board.getBoard())
             
             lastPiece = board.getLastPiece()
-            
-            b = board.getBoard().T
-            print("Board 2:")
-            print(board.getBoard())
-            #self.printGame(b)
-            b = board.getBoard().T
+            print ("last piece =", lastPiece)
             #needs while loop to complete game
             checkWin = self.checkForWin(board.getBoard(), lastPiece)
         if checkWin == 0:
