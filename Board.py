@@ -43,7 +43,7 @@ class Board():
         return self.lastPiece;
     def isBoardFilled(self):
         for j in range(self.cols):
-            if self.board[j][0] == 0:
+            if self.board[0][j] == 0:
                 return False
         return True
     
