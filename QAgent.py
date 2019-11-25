@@ -6,11 +6,11 @@ import Board
 class QAgent(Agent):
     def __init__(self, pTag, actions, alpha, gamma, oTag):
         super(Agent,self).__init__()
-        self.qTable = np.zeros(7, dtype=int)
+        self.qTable = [0] * 7
         self.alpha = alpha        
         self.gamma = gamma
-        self.pTag = pTag
-        self.oTag = oTag
+        self.pTag = pTag #player tag
+        self.oTag = oTag #opponent tag
         self.numCol = len(self.qTable)
         
     def chooseAction (self):
@@ -19,16 +19,24 @@ class QAgent(Agent):
         actionsTemp = []
         lenActions = len(actions)
         return rand.randint(0,lenActions - 1)
-    def evalColFunction (self,col, board):
-        '''heuristic function that will return a value from 1-4 based on
+    def evalColFunction (self, col, board):
+        '''heuristic functionthat will return a value from 1-4 based on
         the danger of losing/winning in the nexr state'''
         valCurrent = 0
         valOpp = 0
-        column = board[col - 1]
+        column = []
+        for i in range(6):
+            column.append(board[i][col])
         #detrmines which plyers coin is sitting on top
-        top = column.index(self.pTag)
-        below = column.index(self.oTag)
-        if top < below:
+        if (self.pTag in column):
+            top = column.index(self.pTag)
+        else:
+            top = 6
+        if (self.oTag in column):
+            below = column.index(self.oTag)
+        else:
+            below = 6
+        if top < below and top != 0:
             valCurrent +=1
             #loop down column while player has a connection
             for i in range (top+1, len(column)):
@@ -37,7 +45,7 @@ class QAgent(Agent):
                 else:
                     break
         #opponents coin is on top
-        elif below < top:
+        elif below < top and below != 0:
             valOpp +=1
             for i in range (below+1, len(column)):
                 if column[i] == self.oTag:
@@ -45,218 +53,279 @@ class QAgent(Agent):
                 else:
                     break
         return self.returnValue(valCurrent, valOpp)
+    
     def evalRowFunction (self, col, numCol, board):
         '''heruistic function that counts number of roww connections'''
         valCurrent = 0
         valOpp = 0
-        column = board[col - 1]
-        top = column.index(self.pTag)
-        below = column.index(self.oTag)
+        column = []
+        for i in range(6):
+            column.append(board[i][col])
+        if (self.pTag in column):
+            top = column.index(self.pTag)
+        else:
+            top = 6
+        if (self.oTag in column):
+            below = column.index(self.oTag)
+        else:
+            below = 6
         #since we are determining row connections
         #we dont care about the filled slots
+        emptySpots = 5
         if top < below and top != 0:
             emptySpots = top - 1
         elif below < top and below != 0:
             emptySpots = below - 1
         #3 cases when we are on the first, last or middle columns
-        if col == 1:
+        if col == 0 and board[0][col] == 0:
             #if player coin is on same row
-            if board[col][emptySpots] == self.pTag:
-                valCurrent += 1
-                #assumption we can't have a longer connection than 3 coins
-                for i in range (2,4):
-                    if board[i][emptySpots] == self.pTag:
-                        valCurrent += 1
-                    else:
-                        break
-            elif board[col][emptySpots] == self.oTag:
-                valOpp += 1
-                for i in range (2,4):
-                    if board[i][emptySpots] == self.oTag:
-                        valOpp += 1
-                    else:
-                        break
-         #last column           
-        elif col == numCol:
-            if board[col - 1][emptySpots] == self.pTag:
-                valCurrent += 1
-                for i in range (col - 2,  col - 4):
-                    if board[i][emptySpots] == self.pTag:
-                            valCurrent += 1
-                    else:
-                        break
-            elif board[col - 1][emptySpots] == self.oTag:
-                valOpp += 1
-                for i in range (col - 2, col - 4):
-                    if board[i][emptySpots] == self.oTag:
-                        valOpp += 1
-                    else:
-                        break
-        else:
-            if board[col][emptySpots] == self.pTag:
-               valCurrent += 1
-               for i in range (col + 1, col + 2):
-                   if board[i][emptySpots] == self.pTag:
-                        valCurrent += 1
-                   else:
-                       break
-            elif board[col][emptySpots] == self.oTag:
-                valOpp += 1
-                for i in range (col + 1, col + 2):
-                    if board[i][emptySpots] == self.oTag:
-                         valOpp += 1
-                    else:
-                        break
-            if board[col-2][emptySpots] == self.pTag:
-               valCurrent += 1
-               for i in range (col-3, col -4):
-                   if board[i][emptySpots] == self.pTag:
-                        valCurrent += 1
-                   else:
-                       break
-            elif board[col-2][emptySpots] == self.oTag:
-                valOpp += 1
-                for i in range (col - 3, col - 4):
-                    if board[i][emptySpots] == self.oTag:
-                         valOpp += 1
-                    else:
-                        break
-            
+            j = 1
+            while (j <= 6):
+                if board[emptySpots][j] == self.pTag:
+                    valCurrent += 1
+                else:
+                    break
+                j += 1
+            j = 1
+            while (j <= 6):
+                if board[emptySpots][j] == self.oTag:
+                    valOpp += 1
+                else:
+                    break
+                j += 1
+        #last column           
+        elif col == 6 and board[0][col] == 0:
+            #if player coin is on same row
+            j = 6
+            while (j >= 0):
+                if board[emptySpots][j] == self.pTag:
+                    valCurrent += 1
+                else:
+                    break
+                j -= 1
+            j = 6
+            while (j >= 0):
+                if board[emptySpots][j] == self.oTag:
+                    valOpp += 1
+                else:
+                    break
+                j -= 1
+        elif board[0][col] == 0:
+            j = 1
+            while (j <= 6):
+                if board[emptySpots][j] == self.pTag:
+                    valCurrent += 1
+                else:
+                    break
+                j += 1
+            j = 1
+            while (j <= 6):
+                if board[emptySpots][j] == self.oTag:
+                    valOpp += 1
+                else:
+                    break
+                j += 1
+            j = 6
+            while (j >= 0):
+                if board[emptySpots][j] == self.pTag:
+                    valCurrent += 1
+                else:
+                    break
+                j -= 1
+            j = 6
+            while (j >= 0):
+                if board[emptySpots][j] == self.oTag:
+                    valOpp += 1
+                else:
+                    break
+                j -= 1
         return self.returnValue(valCurrent, valOpp)
+    
     def evalDiagFunction (self, col, numCol, board):
         '''heuristic to evaluate diagonal connections'''
         valCurrent = 0
         valOpp = 0
         print("col Diag: ", col)
-        column = board[col-1]
-        
-        top = column.index(self.pTag)
-        below = column.index(self.oTag)
+        column = []
+        for i in range(6):
+            column.append(board[i][col])
+        if (self.pTag in column):
+            top = column.index(self.pTag)
+        else:
+            top = 6
+        if (self.oTag in column):
+            below = column.index(self.oTag)
+        else:
+            below = 6
+        emptySpots = 5
         if top < below and top != 0:
             emptySpots = top - 1
         elif below < top and below != 0:
             emptySpots = below - 1
 
-        if col == 1:
-            try:
-                if board[col][emptySpots + 1] == self.pTag:
+        if col == 0 and board[0][col] == 0:
+            #upright
+            i = emptySpots - 1
+            j = col + 1
+            while (i >= 0 and j <= 6):
+                if board[i][j] == self.pTag:
                     valCurrent += 1
-                    for i in range (2,4):
-                        if board[i][emptySpots + 1] == self.pTag:
-                            valCurrent += 1
-                        else:
-                            break
-                elif board[col][emptySpots + 1] == self.oTag:
+                else:
+                    break
+                i -= 1
+                j += 1
+            i = emptySpots - 1
+            j = col + 1
+            while (i >= 0 and j <= 6):
+                if board[i][j] == self.oTag:
                     valOpp += 1
-                    for i in range (2,4):
-                        if board[i][emptySpots + 1] == self.oTag:
-                            valOpp += 1
-                        else:
-                            break
-            except IndexError:
-                valCurrent = valCurrent
-                valOpp = valOpp
-            try:
-                if board[col][emptySpots - 1] == self.pTag:
+                else:
+                    break
+                i -= 1
+                j += 1
+            #downright
+            i = emptySpots + 1
+            j = col + 1
+            while (i <= 5 and j <= 6):
+                if board[i][j] == self.pTag:
                     valCurrent += 1
-                    for i in range (2,4):
-                        if board[i][emptySpots - 1] == self.pTag:
-                            valCurrent += 1
-                        else:
-                            break
-                elif board[col][emptySpots - 1] == self.oTag:
+                else:
+                    break
+                i += 1
+                j += 1
+            i = emptySpots + 1
+            j = col + 1
+            while (i <= 5 and j <= 6):
+                if board[i][j] == self.oTag:
                     valOpp += 1
-                    for i in range (2,4):
-                        if board[i][emptySpots - 1] == self.oTag:
-                            valOpp += 1
-                        else:
-                            break
-            except IndexError:
-                valCurrent = valCurrent
-                valOpp = valOpp
-        elif col == numCol:
-            try:
-                if board[col - 1][emptySpots + 1] == self.pTag:
+                else:
+                    break
+                i += 1
+                j += 1
+        if col == 6 and board[0][col] == 0:
+            #upleft
+            i = emptySpots - 1
+            j = col - 1
+            while (i >= 0 and j >= 0):
+                if board[i][j] == self.pTag:
                     valCurrent += 1
-                    for i in range (col-2,col-4):
-                        if board[i][emptySpots + 1] == self.pTag:
-                            valCurrent += 1
-                        else:
-                            break
-                elif board[col-1][emptySpots + 1] == self.oTag:
+                else:
+                    break
+                i -= 1
+                j -= 1
+            i = emptySpots - 1
+            j = col - 1
+            while (i >= 0 and j >= 0):
+                if board[i][j] == self.oTag:
                     valOpp += 1
-                    for i in range (col-2,col-4):
-                        if board[i][emptySpots + 1] == self.oTag:
-                            valOpp += 1
-                        else:
-                            break
-            except IndexError:
-                valCurrent = valCurrent
-                valOpp = valOpp
-            try:
-                if board[col-1][emptySpots - 1] == self.pTag:
+                else:
+                    break
+                i -= 1
+                j -= 1
+            #downleft
+            i = emptySpots + 1
+            j = col - 1
+            while (i <= 5 and j >= 0):
+                if board[i][j] == self.pTag:
                     valCurrent += 1
-                    for i in range (col-2,col-4):
-                        if board[i][emptySpots - 1] == self.pTag:
-                            valCurrent += 1
-                        else:
-                            break
-                elif board[col-1][emptySpots - 1] == self.oTag:
+                else:
+                    break
+                i += 1
+                j -= 1
+            i = emptySpots + 1
+            j = col - 1
+            while (i <= 5 and j >= 0):
+                if board[i][j] == self.oTag:
                     valOpp += 1
-                    for i in range (col-2,col-4):
-                        if board[i][emptySpots - 1] == self.oTag:
-                            valOpp += 1
-                        else:
-                            break
-            except IndexError:
-                valCurrent = valCurrent
-                valOpp = valOpp
-        else:
-            try:
-                if board[col - 1][emptySpots + 1] == self.pTag and board[col + 1][emptySpots - 1] != self.pTag:
+                else:
+                    break
+                i += 1
+                j -= 1
+        elif board[0][col] == 0:
+            #upright
+            i = emptySpots - 1
+            j = col + 1
+            while (i >= 0 and j <= 6):
+                if board[i][j] == self.pTag:
                     valCurrent += 1
-                    for i in range (col-2,col-4):
-                        if board[i][emptySpots + 1] == self.pTag:
-                            valCurrent += 1
-                        else:
-                            break
-                elif board[col - 1][emptySpots + 1] == self.oTag and board[col + 1][emptySpots - 1] != self.oTag:
+                else:
+                    break
+                i -= 1
+                j += 1
+            i = emptySpots - 1
+            j = col + 1
+            while (i >= 0 and j <= 6):
+                if board[i][j] == self.oTag:
                     valOpp += 1
-                    for i in range (col-2,col-4):
-                        if board[i][emptySpots + 1] == self.oTag:
-                            valOpp += 1
-                        else:
-                            break
-                #check either side of the middle diagonals
-                if board[col - 1][emptySpots + 1] == self.pTag and board[col + 1][emptySpots - 1] == self.pTag:
-                    valCurrent += 2
-                    #max of 2 and 1 conections 
-                    if board[col - 2][emptySpots + 2] == self.pTag or board[col + 2][emptySpots - 2] == self.pTag:
-                        valCurrent +=1
-                if board[col + 1][emptySpots - 1] == self.pTag and board[col - 1][emptySpots + 1] == self.pTag:
-                    valCurrent += 2
-                    if board[col + 2][emptySpots - 2] == self.pTag or board[col - 2][emptySpots + 2] == self.pTag:
-                        valCurrent +=1
-                if board[col - 1][emptySpots + 1] == self.oTag and board[col + 1][emptySpots - 1] == self.oTag:
-                    valOpp += 2
-                    if board[col - 2][emptySpots + 2] == self.oTag or board[col + 2][emptySpots - 2] == self.oTag:
-                        valOpp +=1
-                if board[col + 1][emptySpots - 1] == self.oTag and board[col - 1][emptySpots + 1] == self.oTag:
-                    valOpp += 2
-                    if board[col + 2][emptySpots - 2] == self.oTag or board[col - 2][emptySpots + 2] == self.oTag:
-                        valOpp +=1 
-            except IndexError:
-                valCurrent = valCurrent
-                valOpp = valOpp
-                            
+                else:
+                    break
+                i -= 1
+                j += 1
+            #downright
+            i = emptySpots + 1
+            j = col + 1
+            while (i <= 5 and j <= 6):
+                if board[i][j] == self.pTag:
+                    valCurrent += 1
+                else:
+                    break
+                i += 1
+                j += 1
+            i = emptySpots + 1
+            j = col + 1
+            while (i <= 5 and j <= 6):
+                if board[i][j] == self.oTag:
+                    valOpp += 1
+                else:
+                    break
+                i += 1
+                j += 1
+            #upleft
+            i = emptySpots - 1
+            j = col - 1
+            while (i >= 0 and j >= 0):
+                if board[i][j] == self.pTag:
+                    valCurrent += 1
+                else:
+                    break
+                i -= 1
+                j -= 1
+            i = emptySpots - 1
+            j = col - 1
+            while (i >= 0 and j >= 0):
+                if board[i][j] == self.oTag:
+                    valOpp += 1
+                else:
+                    break
+                i -= 1
+                j -= 1
+            #downleft
+            i = emptySpots + 1
+            j = col - 1
+            while (i <= 5 and j >= 0):
+                if board[i][j] == self.pTag:
+                    valCurrent += 1
+                else:
+                    break
+                i += 1
+                j -= 1
+            i = emptySpots + 1
+            j = col - 1
+            while (i <= 5 and j >= 0):
+                if board[i][j] == self.oTag:
+                    valOpp += 1
+                else:
+                    break
+                i += 1
+                j -= 1
         return self.returnValue(valCurrent, valOpp)
     
     def returnValue (self, valCurrent, valOpp):
         '''evalutes the correct return value based on the heurstic functions'''
         #if the current player has to connections, win state
-        if valCurrent == 3:
+        if valCurrent >= 3:
             return 4
-        elif valOpp == 3 and valCurrent != 3:
+        elif valOpp >= 3 and valCurrent != 3:
             return valOpp
         elif valOpp == 2 or valCurrent == 2:
             return 2
@@ -264,6 +333,7 @@ class QAgent(Agent):
             return 1
         else:
             return 0
+        
     def heuristicValue (self, col, numCol, board):
         '''function to return max of the heuristic functions'''
         return max([self.evalDiagFunction(col, numCol, board), self.evalRowFunction(col, numCol, board),
@@ -272,10 +342,9 @@ class QAgent(Agent):
     def updateQ (self, board):
         '''updates the q table'''
         #numCol = len(self.qTable)
-        for i in range (0, self.numCol):
-            col = board[i]
+        for i in range (0, 7):
             self.qTable[i] = self.qTable[i] + self.alpha*(1 + self.gamma*
-                                                          self.heuristicValue(i,self.numCol,board)- self.qTable[i]) 
+                                                          self.heuristicValue(i, self.numCol,board)- self.qTable[i]) 
     def checkPlayerInsert(self, board):
         '''checks to see if the player has already inserted a coin'''
         for i in range(6):
@@ -286,7 +355,7 @@ class QAgent(Agent):
     
     def choice (self, board, isEmpty):
         '''player choose optimal action'''
-        if self.checkPlayerInsert(board) == False:
+        if not self.checkPlayerInsert(board):
             placement = rand.randint(0,6)
             #update q table
             self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(1) - self.qTable[placement])
@@ -297,7 +366,7 @@ class QAgent(Agent):
             placement = self.qTable.index(maxValue)
             print(placement)
             #heuristic value based off the next state
-            self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(self.heuristicValue(placement,self.numCol,board)) - self.qTable[placement])
+            self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(self.heuristicValue(placement, self.numCol, board)) - self.qTable[placement])
 
             return placement                                                                              
                                                                           
