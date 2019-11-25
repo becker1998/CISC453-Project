@@ -276,25 +276,21 @@ class QAgent(Agent):
             col = board[i]
             self.qTable[i] = self.qTable[i] + self.alpha*(1 + self.gamma*
                                                           self.heuristicValue(i,self.numCol,board)- self.qTable[i]) 
-    def checkPlayerInsert(self, board, cols):
+    def checkPlayerInsert(self, board):
         '''checks to see if the player has already inserted a coin'''
-        for j in range(cols):
-            if board[j][0] == 2:
-                return True
+        for i in range(6):
+            for j in range(7):
+                if board[i][j] == self.pTag:
+                    return True
         return False
+    
     def choice (self, board, isEmpty):
         '''player choose optimal action'''
-        if isEmpty:
-            #since board is empty pick random column to drop coin
+        if self.checkPlayerInsert(board) == False:
             placement = rand.randint(0,6)
             #update q table
             self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(1) - self.qTable[placement])
-            return placement + 1
-        elif self.checkPlayerInsert(board, self.numCol) == False:
-            placement = rand.randint(0,6)
-            #update q table
-            self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(1) - self.qTable[placement])
-            return placement + 1
+            return placement
         else:
             self.updateQ(board)
             maxValue = max(self.qTable)
@@ -303,9 +299,5 @@ class QAgent(Agent):
             #heuristic value based off the next state
             self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(self.heuristicValue(placement,self.numCol,board)) - self.qTable[placement])
 
-            return placement + 1                                                                                 
+            return placement                                                                              
                                                                           
-    
-                
-        
-        
