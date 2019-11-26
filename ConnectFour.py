@@ -269,5 +269,5 @@ class ConnectFour:
         elif checkWin == 2:
             print ("p2 won")
 
-game = ConnectFour(6, 7, 1, 1)
+game = ConnectFour(6, 7, 0.1, 0.3)
 game.play()

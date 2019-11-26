@@ -397,7 +397,7 @@ class QAgent(Agent):
                     choices.append(i)
             placement = rand.choice(choices)
             #heuristic value based off the next state
-            #self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(self.heuristicValue(placement, self.numCol, board)) - self.qTable[placement])
+            self.qTable[placement] = self.qTable[placement] + self.alpha*(1 + self.gamma*(self.heuristicValue(placement, self.numCol, board)) - self.qTable[placement])
 
             return placement                                                                              
                                                                           
