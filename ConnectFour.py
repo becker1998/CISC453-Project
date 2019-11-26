@@ -278,7 +278,7 @@ class ConnectFour:
             
 def qValues():
     snIn = open("Q_Results.txt", "w")
-    snIn.write("Q Averages for alpha and gamma starting at 0.01 and ending at 1 with intervals of 0.05\n")
+    snIn.write("Q Averages for alpha and gamma starting at 0.01 and ending at 1 with intervals of 0.01\n")
     
 
     for i in range (1,100,50):
