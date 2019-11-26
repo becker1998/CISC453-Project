@@ -379,6 +379,10 @@ class QAgent(Agent):
                 if board[i][j] == self.pTag:
                     return True
         return False
+    def getQTable (self):
+        return self.qTable
+    def getPTag (self):
+        return self.pTag
     
     def choice (self, board, isEmpty):
         '''player choose optimal action'''
@@ -390,7 +394,7 @@ class QAgent(Agent):
         else:
             self.updateQ(board)
             maxValue = max(self.qTable)
-            print(self.pTag, self.qTable)
+            #print(self.pTag, self.qTable)
             choices = []
             for i in range(7):
                 if self.qTable[i] == maxValue:

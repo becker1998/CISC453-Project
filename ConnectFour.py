@@ -5,15 +5,18 @@ from Board import Board
 from QAgent import QAgent
 
 class ConnectFour:
-    def __init__(self, rows, cols, alpha, gamma):
+    def __init__(self, alpha, gamma):
         self.turn = rand.randint(1,2)
-        self.rows = rows
-        self.cols = cols
-        self.alpha = alpha
-        self.gamma = gamma
-        self.actions = np.zeros(cols, dtype = int)
+        self.rows = 6
+        self.cols = 7
+        self.alpha = 0.01
+        self.gamma = 0.01
+        self.actions = np.zeros(self.cols, dtype = int)
         self.twoconnections = []
         self.threeconnections = []
+        self.board = Board(self.rows, self.cols)
+        self.p1 = QAgent(1, self.actions, self.alpha, self.gamma, 2)
+        self.p2 = QAgent(2, self.actions, self.alpha, self.gamma, 1)
         
     def checkForWin(self, board, lastPiece):
         topscore = 0
@@ -230,38 +233,41 @@ class ConnectFour:
 
         print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
       for row in board]))
+
+    def returnP1QTable(self):
+        return self.p1.getQTable()
+    def returnP1Tag(self):
+        return self.p1.getPTag()
+    def returnP2QTable(self):
+        return self.p2.getQTable()
+    def returnP2Tag(self):
+        return self.p2.getPTag()
         
     def play (self):
         '''runs the game with 2 q agents'''
 
         
-        board = Board(self.rows, self.cols)
-        p1 = QAgent(1, self.actions, self.alpha, self.gamma, 2)
-        p2 = QAgent(2, self.actions, self.alpha, self.gamma, 1)
 
         checkWin = 0
-        while (checkWin == 0 and not board.isBoardFilled()):
-            insertP1 = p1.choice(board.getBoard(), board.isBoardEmpty())
-            print("insert:", insertP1)
-            board.insertPiece(1, insertP1)
+        while (checkWin == 0 and not self.board.isBoardFilled()):
+            insertP1 = self.p1.choice(self.board.getBoard(), self.board.isBoardEmpty())
+            self.board.insertPiece(1, insertP1)
             
-            print("p1's move:")
-            print(board.getBoard())
-            lastPiece = board.getLastPiece()
-            print ("last piece =", lastPiece)
-            checkWin = self.checkForWin(board.getBoard(), lastPiece)
-            if (checkWin != 0 or board.isBoardFilled()):
+            #print("p1's move:")
+            #print(self.board.getBoard())
+            lastPiece = self.board.getLastPiece()
+            checkWin = self.checkForWin(self.board.getBoard(), lastPiece)
+            if (checkWin != 0 or self.board.isBoardFilled()):
                 break
-            insertP2 = p2.choice(board.getBoard(), board.isBoardEmpty())
-            print("insert:", insertP2)
-            board.insertPiece(2, insertP2)
-            print("p2's move:")
-            print(board.getBoard())
+            insertP2 = self.p2.choice(self.board.getBoard(), self.board.isBoardEmpty())
+            self.board.insertPiece(2, insertP2)
+            #print("p2's move:")
+            #print(self.board.getBoard())
             
-            lastPiece = board.getLastPiece()
-            print ("last piece =", lastPiece)
+            lastPiece = self.board.getLastPiece()
+            #print ("last piece =", lastPiece)
             #needs while loop to complete game
-            checkWin = self.checkForWin(board.getBoard(), lastPiece)
+            checkWin = self.checkForWin(self.board.getBoard(), lastPiece)
         if checkWin == 0:
             print ("no one won")
         elif checkWin == 1:
@@ -269,5 +275,30 @@ class ConnectFour:
         elif checkWin == 2:
             print ("p2 won")
 
-game = ConnectFour(6, 7, 0.1, 0.3)
-game.play()
+            
+def qValues():
+    snIn = open("Q_Results.txt", "w")
+    snIn.write("Q Averages for alpha and gamma starting at 0.01 and ending at 1 with intervals of 0.05\n")
+    
+
+    for i in range (1,100,50):
+        alpha = i / 100
+        for j in range(1, 100, 50):
+            gamma = j / 100
+            snIn.write("\n")
+            snIn.write("alpha: " + str(alpha) + " gamma: " + str(gamma))
+            game = ConnectFour(alpha, gamma)
+            game.play()
+            average1 = sum(game.returnP1QTable()) / len(game.returnP1QTable())
+            average2 = sum(game.returnP2QTable()) / len(game.returnP2QTable())
+            snIn.write("\n") 
+            snIn.write("Player 1 Q Average: " + str(round(average1, 3)))
+            snIn.write("\n")  
+            snIn.write("Player 2 Q Average: " + str(round(average2, 3)))
+            snIn.write("\n")          
+    
+    
+    
+    snIn.close()
+
+qValues()

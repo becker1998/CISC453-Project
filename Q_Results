@@ -1,0 +1,6 @@
+Q Averages for alpha and gamma starting at 0.01 and ending at 1 with intervals of 0.05
+
+alpha: 0.01 gamma: 0.01Player 1 Q Average: 1.2814857142857143Player 2 Q Average: 0.9985999999999999
+alpha: 0.01 gamma: 0.51Player 1 Q Average: 1.1386285714285713Player 2 Q Average: 0.42858571428571424
+alpha: 0.51 gamma: 0.01Player 1 Q Average: 0.2814857142857143Player 2 Q Average: -0.0014000000000000362
+alpha: 0.51 gamma: 0.51Player 1 Q Average: 1.5686142857142857Player 2 Q Average: 1.7100571428571427
