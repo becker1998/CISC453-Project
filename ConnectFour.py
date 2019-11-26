@@ -281,9 +281,9 @@ def qValues():
     snIn.write("Q Averages for alpha and gamma starting at 0.01 and ending at 1 with intervals of 0.01\n")
     
 
-    for i in range (1,100,50):
+    for i in range (1,100,1):
         alpha = i / 100
-        for j in range(1, 100, 50):
+        for j in range(1, 100, 1):
             gamma = j / 100
             snIn.write("\n")
             snIn.write("alpha: " + str(alpha) + " gamma: " + str(gamma))
