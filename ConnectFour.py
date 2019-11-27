@@ -9,8 +9,8 @@ class ConnectFour:
         self.turn = rand.randint(1,2)
         self.rows = 6
         self.cols = 7
-        self.alpha = 0.01
-        self.gamma = 0.01
+        self.alpha = alpha
+        self.gamma = gamma
         self.actions = np.zeros(self.cols, dtype = int)
         self.twoconnections = []
         self.threeconnections = []
@@ -245,15 +245,15 @@ class ConnectFour:
         
     def play (self):
         '''runs the game with 2 q agents'''
-
-        
-
         checkWin = 0
+        print ("begin")
+        self.printGame(self.board.getBoard())
         while (checkWin == 0 and not self.board.isBoardFilled()):
             insertP1 = self.p1.choice(self.board.getBoard(), self.board.isBoardEmpty())
             self.board.insertPiece(1, insertP1)
             
-            #print("p1's move:")
+            print("p1's move:")
+            self.printGame(self.board.getBoard())
             #print(self.board.getBoard())
             lastPiece = self.board.getLastPiece()
             checkWin = self.checkForWin(self.board.getBoard(), lastPiece)
@@ -261,7 +261,8 @@ class ConnectFour:
                 break
             insertP2 = self.p2.choice(self.board.getBoard(), self.board.isBoardEmpty())
             self.board.insertPiece(2, insertP2)
-            #print("p2's move:")
+            print("p2's move:")
+            self.printGame(self.board.getBoard())
             #print(self.board.getBoard())
             
             lastPiece = self.board.getLastPiece()
@@ -277,6 +278,9 @@ class ConnectFour:
 
             
 def qValues():
+    '''function to test alpha and gamma values for optimality by taking average
+    of q table'''
+    
     snIn = open("Q_Results.txt", "w")
     snIn.write("Q Averages for alpha and gamma starting at 0.01 and ending at 1 with intervals of 0.01\n")
     
@@ -300,5 +304,18 @@ def qValues():
     
     
     snIn.close()
+def testRun (alpha, gamma):
+    for i in range (1,6):
+        game = ConnectFour(alpha, gamma)
+        game.play()
+def playOneGame(alpha, gamma):
+    game = ConnectFour(alpha, gamma)
+    game.play()
 
-qValues()
+alpha = 0.58
+gamma = 0.91
+#qValues()
+#testRun(alpha, gamma)
+playOneGame(alpha, gamma)
+
+
